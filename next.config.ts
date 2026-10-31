@@ -46,6 +46,7 @@ const nextConfig: NextConfig = {
   experimental: {
     // Product photos are uploaded through a Server Action (8 MB max + multipart overhead).
     serverActions: { bodySizeLimit: "9mb" },
+    agentUpgrade: "security",
   },
   images: {
     // Uploaded photos and the bundled /samples photos go through the optimiser;
