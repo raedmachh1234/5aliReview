@@ -1,43 +1,31 @@
 import "server-only";
-import { cache } from "react";
 import { cookies } from "next/headers";
-import type { Actor } from "@/lib/types";
-import { DEMO_SESSION_COOKIE } from "@/config/cookies";
-import { isDemoMode } from "@/server/env";
-import { verifyDemoSessionToken } from "./demo-session";
+import { redirect } from "next/navigation";
+import { isProduction } from "@/server/env";
+import { createSessionToken, resolveAdminCredentials, SESSION_COOKIE, SESSION_TTL_SECONDS, verifySessionToken } from "./token";
 
-export interface SessionUser extends Actor {
-  fullName: string | null;
+export async function isAdmin(): Promise<boolean> {
+  const credentials = resolveAdminCredentials();
+  if (!credentials) return false;
+  const token = (await cookies()).get(SESSION_COOKIE)?.value;
+  return verifySessionToken(token, credentials.key);
 }
 
-/**
- * The signed-in user for this request, or null. Cached per request.
- * `isPlatformAdmin` is always read from the database/store, never from a
- * client-controlled value.
- */
-export const getSessionUser = cache(async (): Promise<SessionUser | null> => {
-  if (isDemoMode) {
-    const userId = verifyDemoSessionToken((await cookies()).get(DEMO_SESSION_COOKIE)?.value);
-    if (!userId) return null;
-    const { getDemoUser } = await import("@/server/data/demo");
-    const user = getDemoUser(userId);
-    return user ? { userId: user.id, email: user.email, fullName: user.fullName, isPlatformAdmin: user.isPlatformAdmin } : null;
-  }
+/** Call at the top of every admin page and Server Action. */
+export async function requireAdmin(): Promise<void> {
+  if (!(await isAdmin())) redirect("/admin/login");
+}
 
-  const { createUserClient } = await import("@/server/supabase/clients");
-  const supabase = await createUserClient();
-  // getUser() validates the JWT with Supabase Auth (getSession() would trust the cookie).
-  const { data, error } = await supabase.auth.getUser();
-  if (error || !data.user) return null;
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("full_name, is_platform_admin")
-    .eq("id", data.user.id)
-    .maybeSingle<{ full_name: string | null; is_platform_admin: boolean }>();
-  return {
-    userId: data.user.id,
-    email: data.user.email ?? "",
-    fullName: profile?.full_name ?? null,
-    isPlatformAdmin: profile?.is_platform_admin === true,
-  };
-});
+export async function startSession(key: Buffer): Promise<void> {
+  (await cookies()).set(SESSION_COOKIE, createSessionToken(key), {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: "lax",
+    path: "/",
+    maxAge: SESSION_TTL_SECONDS,
+  });
+}
+
+export async function endSession(): Promise<void> {
+  (await cookies()).delete(SESSION_COOKIE);
+}

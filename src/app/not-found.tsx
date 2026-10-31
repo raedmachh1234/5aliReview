@@ -1,19 +1,24 @@
-import Link from "next/link";
-import { getI18n } from "@/i18n/server";
-import { Logo } from "@/components/brand/logo";
-import { buttonClass } from "@/components/ui/button";
+import { ButtonLink } from "@/components/ui/button";
+import { Icon } from "@/components/ui/icon";
 
-export default async function NotFound() {
-  const { t } = await getI18n();
+export default function NotFound() {
   return (
-    <main id="main" className="mx-auto flex min-h-dvh max-w-md flex-col items-center justify-center px-6 text-center">
-      <Logo />
-      <p className="mt-10 text-sm font-bold tracking-widest text-muted">404</p>
-      <h1 className="mt-2 text-3xl font-extrabold tracking-tight text-ink">{t.errors.notFoundTitle}</h1>
-      <p className="mt-2 text-ink-2">{t.errors.notFoundBody}</p>
-      <Link href="/" className={buttonClass("primary", "md", "mt-8")}>
-        {t.errors.goHome}
-      </Link>
+    <main className="relative isolate grid min-h-dvh place-items-center overflow-hidden px-4">
+      <div aria-hidden="true" className="bg-grid absolute inset-0 -z-10" />
+      <div className="max-w-md text-center">
+        <p className="text-8xl font-semibold tracking-[-0.04em] text-accent-text">404</p>
+        <h1 className="mt-4 text-2xl font-semibold tracking-tight">We couldn’t find that page</h1>
+        <p className="mt-2 text-muted">The product may have been removed, or the link is mistyped.</p>
+        <div className="mt-8 flex justify-center gap-3">
+          <ButtonLink href="/products" variant="accent">
+            Browse products
+          </ButtonLink>
+          <ButtonLink href="/" variant="secondary">
+            <Icon name="home" size={16} />
+            Home
+          </ButtonLink>
+        </div>
+      </div>
     </main>
   );
 }

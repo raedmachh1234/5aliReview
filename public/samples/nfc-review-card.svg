@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200" width="1200" height="1200">
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#efedff"/><stop offset="1" stop-color="#cfc8ff"/></linearGradient>
+<radialGradient id="glow" cx="0.3" cy="0.25" r="0.7"><stop offset="0" stop-color="#ffffff" stop-opacity="0.55"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></radialGradient>
+<filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="28"/></filter>
+<filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="24" stdDeviation="26" flood-color="#000" flood-opacity="0.22"/></filter>
+<linearGradient id="card" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#26262c"/><stop offset="1" stop-color="#0b0b0c"/></linearGradient>
+</defs>
+<rect width="1200" height="1200" fill="url(#bg)"/>
+<rect width="1200" height="1200" fill="url(#glow)"/>
+
+<ellipse cx="610" cy="880" rx="380" ry="46" fill="#3b2fd6" opacity="0.28" filter="url(#shadow)"/>
+<g transform="rotate(-9 600 600)" filter="url(#soft)">
+  <rect x="250" y="380" width="700" height="440" rx="44" fill="url(#card)"/>
+  <rect x="250" y="380" width="700" height="440" rx="44" fill="none" stroke="#ffffff" stroke-opacity="0.12" stroke-width="3"/>
+  <g fill="none" stroke="#ffffff" stroke-width="8.1" stroke-linecap="round"><path d="M846.5 453.8 a 23.4 23.4 0 0 1 0 32.4"/><path d="M864.5 439.4 a 43.2 43.2 0 0 1 0 61.2"/><path d="M882.5 425.0 a 63.0 63.0 0 0 1 0 90.0"/></g><circle cx="830.3" cy="470.0" r="7.2" fill="#ffffff"/>
+  <text x="310" y="480" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#ffffff" letter-spacing="1">YOUR LOGO</text>
+  <polygon points="330.0,610.0 337.9,629.1 358.5,630.7 342.8,644.2 347.6,664.3 330.0,653.5 312.4,664.3 317.2,644.2 301.5,630.7 322.1,629.1" fill="#fbbf24" stroke="#fbbf24" stroke-width="3.6" stroke-linejoin="round"/><polygon points="404.0,610.0 411.9,629.1 432.5,630.7 416.8,644.2 421.6,664.3 404.0,653.5 386.4,664.3 391.2,644.2 375.5,630.7 396.1,629.1" fill="#fbbf24" stroke="#fbbf24" stroke-width="3.6" stroke-linejoin="round"/><polygon points="478.0,610.0 485.9,629.1 506.5,630.7 490.8,644.2 495.6,664.3 478.0,653.5 460.4,664.3 465.2,644.2 449.5,630.7 470.1,629.1" fill="#fbbf24" stroke="#fbbf24" stroke-width="3.6" stroke-linejoin="round"/><polygon points="552.0,610.0 559.9,629.1 580.5,630.7 564.8,644.2 569.6,664.3 552.0,653.5 534.4,664.3 539.2,644.2 523.5,630.7 544.1,629.1" fill="#fbbf24" stroke="#fbbf24" stroke-width="3.6" stroke-linejoin="round"/><polygon points="626.0,610.0 633.9,629.1 654.5,630.7 638.8,644.2 643.6,664.3 626.0,653.5 608.4,664.3 613.2,644.2 597.5,630.7 618.1,629.1" fill="#fbbf24" stroke="#fbbf24" stroke-width="3.6" stroke-linejoin="round"/>
+  <text x="310" y="740" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="52" font-weight="700" fill="#ffffff">Tap to review us</text>
+  <text x="310" y="785" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="26" fill="#ffffff" fill-opacity="0.6">Hold your phone here</text>
+</g>
+</svg>

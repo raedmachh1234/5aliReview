@@ -1,0 +1,551 @@
+/*
+ * The 5ali Review logo animation (LogoAnimation/5ali Review Splash.html),
+ * rebuilt as CSS so it plays from the first paint. Used by splash.tsx.
+ * One run lasts 4 s:
+ *
+ *   0.00 s  Burst  five star outlines spin out into a row
+ *   0.78 s  Fill   they fill gold one by one, with sparks
+ *   1.49 s  Logo   they arch into a crown, the wordmark and motto rise in
+ *   2.67 s  Tap    NFC ripples spread from the logo
+ *   3.45 s  Exit   the logo pushes in and fades, then the page shows through
+ *
+ * Every element's base style is its finished look, and each animation only
+ * says where it comes from, so with Reduce Motion (no animation) visitors see
+ * the finished logo for a moment instead.
+ *
+ * Easings: out = cubic-bezier(0.33, 1, 0.68, 1), in-out = cubic-bezier(0.65, 0, 0.35, 1),
+ * back (overshoot) = cubic-bezier(0.34, 1.56, 0.64, 1).
+ */
+
+.splash {
+  --gold: #f5b400;
+  --gold-light: #ffe08a;
+  --review: var(--accent);
+  --aura: 0.6;
+  --glow: 0.22;
+
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  overflow: hidden;
+  background: var(--bg);
+  animation: splash-out 450ms cubic-bezier(0.65, 0, 0.35, 1) 3550ms both;
+}
+
+@media (prefers-color-scheme: dark) {
+  .splash {
+    --review: color-mix(in oklab, var(--accent) 62%, white);
+    --aura: 1;
+    --glow: 0.32;
+  }
+}
+
+@keyframes splash-out {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+.splash__defs {
+  position: absolute;
+}
+
+/*
+ * The animation is drawn on a 1920 × 1080 stage where 1em is one stage pixel.
+ * It's sized so the logo (about 1120 px wide) fits any screen, phones included.
+ */
+.splash__stage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-size: min(calc(100vw / 1120), calc(100vh / 1080));
+  font-size: min(calc(100vw / 1120), calc(100dvh / 1080));
+  width: 1920em;
+  height: 1080em;
+  margin: -540em 0 0 -960em;
+  line-height: normal;
+}
+
+/* Background: two slow-drifting pools of accent colour under a vignette. */
+.splash__ambient {
+  position: absolute;
+  inset: 0;
+  animation: splash-ambient 3960ms linear both;
+}
+
+@keyframes splash-ambient {
+  0% {
+    opacity: 0;
+    animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
+  }
+  7.92% {
+    opacity: 1;
+  }
+  87.13% {
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.splash__aura {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, var(--accent), transparent);
+  translate: -50% -50%;
+}
+
+.splash__aura--west {
+  top: 400em;
+  left: 560em;
+  width: 1000em;
+  height: 720em;
+  opacity: calc(0.16 * var(--aura));
+  animation: splash-drift-west 3960ms linear both;
+}
+
+.splash__aura--east {
+  top: 680em;
+  left: 1380em;
+  width: 1100em;
+  height: 780em;
+  opacity: calc(0.12 * var(--aura));
+  animation: splash-drift-east 3960ms linear both;
+}
+
+@keyframes splash-drift-west {
+  0% {
+    transform: translate(0, 15em);
+  }
+  25% {
+    transform: translate(9.7em, 14.3em);
+  }
+  50% {
+    transform: translate(17.9em, 12.4em);
+  }
+  75% {
+    transform: translate(23.3em, 9.3em);
+  }
+  100% {
+    transform: translate(25em, 5.4em);
+  }
+}
+
+@keyframes splash-drift-east {
+  0% {
+    transform: translate(21.6em, -7.6em);
+  }
+  25% {
+    transform: translate(15em, -11.1em);
+  }
+  50% {
+    transform: translate(6em, -13.6em);
+  }
+  75% {
+    transform: translate(-3.9em, -14.8em);
+  }
+  100% {
+    transform: translate(-13.2em, -14.8em);
+  }
+}
+
+.splash__vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 75% 75% at 50% 45%, transparent 40%, var(--bg) 100%);
+}
+
+/* Everything in the logo: a slow push-in, a press on the tap, then the exit. */
+.splash__camera {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 48%;
+  animation: splash-camera 3960ms linear both;
+}
+
+@keyframes splash-camera {
+  0% {
+    transform: scale(1);
+  }
+  67.43% {
+    transform: scale(1.0387);
+  }
+  68.82% {
+    transform: scale(1.0365);
+  }
+  69.86% {
+    transform: scale(1.0247);
+  }
+  70.9% {
+    transform: scale(1.0107);
+  }
+  71.94% {
+    transform: scale(1.0259);
+  }
+  72.98% {
+    transform: scale(1.0389);
+  }
+  74.36% {
+    transform: scale(1.0427);
+  }
+  87.13% {
+    transform: scale(1.05);
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+  }
+  100% {
+    transform: scale(1.13);
+    opacity: 0;
+  }
+}
+
+/* Gold glow behind the stars: lights up as they fill, then rises with them. */
+.splash__glow {
+  position: absolute;
+  top: 350em;
+  left: 960em;
+  width: 760em;
+  height: 380em;
+  margin: -190em 0 0 -380em;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, var(--gold), transparent);
+  opacity: var(--glow);
+  animation:
+    splash-glow-in 392ms cubic-bezier(0.33, 1, 0.68, 1) 780ms both,
+    splash-glow-rise 510ms cubic-bezier(0.65, 0, 0.35, 1) 1490ms both;
+}
+
+@keyframes splash-glow-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes splash-glow-rise {
+  from {
+    transform: translateY(190em) scale(1.7105, 1.4737);
+  }
+}
+
+/* NFC tap: three rings ripple out from the logo. */
+.splash__ring {
+  position: absolute;
+  top: 500em;
+  left: 960em;
+  border: 0 solid var(--accent);
+  border-radius: 50%;
+  opacity: 0;
+  translate: -50% -50%;
+  animation: splash-ring 588ms cubic-bezier(0.33, 1, 0.68, 1) forwards;
+  animation-delay: calc(2670ms + var(--k) * 117.6ms);
+}
+
+.splash__ring--gold {
+  border-color: var(--gold);
+}
+
+@keyframes splash-ring {
+  from {
+    width: 420em;
+    height: 420em;
+    border-width: 6em;
+    opacity: 0.7;
+  }
+  to {
+    width: 1700em;
+    height: 1700em;
+    border-width: 2em;
+    opacity: 0;
+  }
+}
+
+/*
+ * One star (--i is 0–4, --d its place from the centre, -2 to 2). Its layers
+ * each run one motion, so the burst and the move into the crown can overlap.
+ */
+.splash__star {
+  position: absolute;
+  top: 540em;
+  left: 960em;
+}
+
+/* Burst: out to its place in the row. Logo: up into the crown. */
+.splash__move {
+  translate: calc(var(--d) * 200em) 0;
+  transform: translate(calc(var(--d) * -110em), calc(var(--dy) * 1em));
+  animation:
+    splash-burst-move 510ms cubic-bezier(0.34, 1.56, 0.64, 1) both,
+    splash-logo-move 510ms cubic-bezier(0.65, 0, 0.35, 1) 1490ms both;
+  animation-delay: calc(var(--i) * 78.4ms), 1490ms;
+}
+
+@keyframes splash-burst-move {
+  from {
+    translate: 0 0;
+  }
+}
+
+@keyframes splash-logo-move {
+  from {
+    transform: none;
+  }
+}
+
+/* A little bounce as the star fills. */
+.splash__bump {
+  animation: splash-bump 220ms linear both;
+  animation-delay: calc(780ms + var(--i) * 109.8ms);
+}
+
+@keyframes splash-bump {
+  0% {
+    transform: scale(1);
+  }
+  6% {
+    transform: scale(1.1522);
+  }
+  13% {
+    transform: scale(1.2636);
+  }
+  21% {
+    transform: scale(1.3);
+  }
+  30% {
+    transform: scale(1.2642);
+  }
+  42% {
+    transform: scale(1.1726);
+  }
+  56% {
+    transform: scale(1.0793);
+  }
+  72% {
+    transform: scale(1.0207);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Burst: spins in from small. Logo: shrinks into the crown, fanned out a little. */
+.splash__turn {
+  transform: rotate(calc(var(--d) * 7deg)) scale(0.475);
+  animation:
+    splash-burst-turn 510ms cubic-bezier(0.34, 1.56, 0.64, 1) both,
+    splash-logo-move 510ms cubic-bezier(0.65, 0, 0.35, 1) 1490ms both;
+  animation-delay: calc(var(--i) * 78.4ms), 1490ms;
+}
+
+@keyframes splash-burst-turn {
+  from {
+    rotate: -180deg;
+    scale: 0.2;
+  }
+}
+
+.splash__shape {
+  position: absolute;
+  top: -80em;
+  left: -80em;
+  width: 160em;
+  height: 160em;
+  overflow: visible;
+  animation: splash-fade-in 157ms cubic-bezier(0.33, 1, 0.68, 1) both;
+  animation-delay: calc(var(--i) * 78.4ms);
+}
+
+@keyframes splash-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.splash__outline {
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 4.5;
+  stroke-linejoin: round;
+  stroke-dasharray: 430;
+  animation: splash-outline 470ms cubic-bezier(0.65, 0, 0.35, 1) both;
+  animation-delay: calc(var(--i) * 78.4ms);
+}
+
+@keyframes splash-outline {
+  from {
+    stroke-dashoffset: 430;
+  }
+}
+
+.splash__fill {
+  animation: splash-fill 220ms cubic-bezier(0.33, 1, 0.68, 1) both;
+  animation-delay: calc(780ms + var(--i) * 109.8ms);
+}
+
+@keyframes splash-fill {
+  from {
+    fill-opacity: 0;
+  }
+}
+
+/* The shine sweeps across the crown and leaves each star a lighter gold. */
+.splash__lit {
+  animation: splash-fade-in 80ms linear both;
+  animation-delay: calc(2040ms + var(--i) * 28ms);
+}
+
+.splash__shine {
+  transform: translate(calc((161.84 - var(--d) * 33.32) * 1px), calc((149.1 - var(--d) * 31.675) * 1px));
+  animation: splash-shine 588ms cubic-bezier(0.65, 0, 0.35, 1) 1843ms both;
+}
+
+@keyframes splash-shine {
+  from {
+    transform: translate(calc((-161.84 - var(--d) * 33.32) * 1px), calc((-158.6 - var(--d) * 31.675) * 1px));
+  }
+}
+
+.splash__sparks {
+  position: absolute;
+  top: -240em;
+  left: -240em;
+  width: 480em;
+  height: 480em;
+  overflow: visible;
+  opacity: 0;
+  animation: splash-sparks-fade 337ms cubic-bezier(0.33, 1, 0.68, 1) forwards;
+  animation-delay: calc(874ms + var(--i) * 109.8ms);
+}
+
+@keyframes splash-sparks-fade {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.splash__spark {
+  stroke: var(--gold);
+  stroke-width: 4;
+  stroke-linecap: round;
+  animation: splash-sparks-shoot 337ms cubic-bezier(0.33, 1, 0.68, 1) both;
+  animation-delay: calc(874ms + var(--i) * 109.8ms);
+}
+
+.splash__spark:nth-child(even) {
+  stroke: var(--gold-light);
+}
+
+/* Each spark is the stretch of its ray that's showing, moving outwards. */
+@keyframes splash-sparks-shoot {
+  from {
+    stroke-dasharray: 4.4 1000;
+    stroke-dashoffset: -83.6;
+  }
+  to {
+    stroke-dasharray: 48.4 1000;
+    stroke-dashoffset: -119.6;
+  }
+}
+
+.splash__wordmark {
+  position: absolute;
+  top: 430em;
+  right: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  gap: 30em;
+  height: 240em;
+  overflow: hidden;
+  font-family: var(--font-barlow-condensed), sans-serif;
+}
+
+.splash__word {
+  font-size: 220em;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  animation: splash-rise 470ms cubic-bezier(0.33, 1, 0.68, 1) 1686ms both;
+}
+
+.splash__word:first-child {
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.splash__word:last-child {
+  font-weight: 500;
+  color: var(--review);
+  animation-delay: 1764ms;
+}
+
+@keyframes splash-rise {
+  from {
+    transform: translateY(105%);
+  }
+}
+
+.splash__tagline {
+  position: absolute;
+  top: 700em;
+  right: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28em;
+}
+
+.splash__rule {
+  width: 130em;
+  height: 2em;
+  background: linear-gradient(to left, var(--gold), transparent);
+  transform-origin: right;
+  animation: splash-rule 470ms cubic-bezier(0.65, 0, 0.35, 1) 2000ms both;
+}
+
+.splash__rule:last-child {
+  background: linear-gradient(to right, var(--gold), transparent);
+  transform-origin: left;
+}
+
+@keyframes splash-rule {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+.splash__motto {
+  font-family: var(--font-barlow), sans-serif;
+  font-size: 32em;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--muted);
+  animation: splash-motto 431ms cubic-bezier(0.33, 1, 0.68, 1) 2039ms both;
+}
+
+@keyframes splash-motto {
+  from {
+    opacity: 0;
+    letter-spacing: 0.5em;
+  }
+}
+
+/*
+ * Reduce Motion: no movement. The finished logo shows for a moment, then
+ * dissolves. These beat the site-wide reduced-motion rule in globals.css.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .splash {
+    animation: splash-out 400ms ease-out 1200ms both !important;
+  }
+
+  .splash * {
+    animation: none !important;
+  }
+}

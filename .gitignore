@@ -48,5 +48,5 @@ next-env.d.ts
 /playwright-report/
 /playwright/.cache/
 
-# generated
-/src/content/legal/defaults.generated.ts
+# local catalogue data and uploaded photos (see DATA_DIR)
+/data/

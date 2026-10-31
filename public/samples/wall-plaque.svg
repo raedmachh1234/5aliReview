@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200" width="1200" height="1200">
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe9f0"/><stop offset="1" stop-color="#ffc4d6"/></linearGradient>
+<radialGradient id="glow" cx="0.3" cy="0.25" r="0.7"><stop offset="0" stop-color="#ffffff" stop-opacity="0.55"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></radialGradient>
+<filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="28"/></filter>
+<filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="24" stdDeviation="26" flood-color="#000" flood-opacity="0.22"/></filter>
+
+</defs>
+<rect width="1200" height="1200" fill="url(#bg)"/>
+<rect width="1200" height="1200" fill="url(#glow)"/>
+
+<ellipse cx="600" cy="960" rx="360" ry="44" fill="#9d174d" opacity="0.22" filter="url(#shadow)"/>
+<g filter="url(#soft)">
+  <rect x="290" y="260" width="620" height="660" rx="48" fill="#ffffff"/>
+  <circle cx="345" cy="315" r="14" fill="#d1d5db"/><circle cx="855" cy="315" r="14" fill="#d1d5db"/>
+  <circle cx="345" cy="865" r="14" fill="#d1d5db"/><circle cx="855" cy="865" r="14" fill="#d1d5db"/>
+  <text x="600" y="400" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="46" font-weight="700" fill="#0b0b0c">Loved your visit?</text>
+  <polygon points="468.0,444.0 474.9,460.5 492.7,462.0 479.1,473.6 483.3,491.0 468.0,481.7 452.7,491.0 456.9,473.6 443.3,462.0 461.1,460.5" fill="#db2777" stroke="#db2777" stroke-width="3.1" stroke-linejoin="round"/><polygon points="534.0,444.0 540.9,460.5 558.7,462.0 545.1,473.6 549.3,491.0 534.0,481.7 518.7,491.0 522.9,473.6 509.3,462.0 527.1,460.5" fill="#db2777" stroke="#db2777" stroke-width="3.1" stroke-linejoin="round"/><polygon points="600.0,444.0 606.9,460.5 624.7,462.0 611.1,473.6 615.3,491.0 600.0,481.7 584.7,491.0 588.9,473.6 575.3,462.0 593.1,460.5" fill="#db2777" stroke="#db2777" stroke-width="3.1" stroke-linejoin="round"/><polygon points="666.0,444.0 672.9,460.5 690.7,462.0 677.1,473.6 681.3,491.0 666.0,481.7 650.7,491.0 654.9,473.6 641.3,462.0 659.1,460.5" fill="#db2777" stroke="#db2777" stroke-width="3.1" stroke-linejoin="round"/><polygon points="732.0,444.0 738.9,460.5 756.7,462.0 743.1,473.6 747.3,491.0 732.0,481.7 716.7,491.0 720.9,473.6 707.3,462.0 725.1,460.5" fill="#db2777" stroke="#db2777" stroke-width="3.1" stroke-linejoin="round"/>
+  <g fill="none" stroke="#0b0b0c" stroke-width="13.5" stroke-linecap="round"><path d="M589.5 623.0 a 39.0 39.0 0 0 1 0 54.0"/><path d="M619.5 599.0 a 72.0 72.0 0 0 1 0 102.0"/><path d="M649.5 575.0 a 105.0 105.0 0 0 1 0 150.0"/></g><circle cx="562.5" cy="650.0" r="12.0" fill="#0b0b0c"/>
+  <text x="600" y="830" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="28" fill="#6b7280">Tap your phone to leave a review</text>
+</g>
+</svg>

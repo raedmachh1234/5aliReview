@@ -1,12 +1,28 @@
 import type { MetadataRoute } from "next";
-import { absoluteUrl } from "@/config/site";
+import { getCategories, getPublishedProducts } from "@/server/catalog";
+import { absoluteUrl, getSiteUrl } from "@/server/site";
 
 /**
- * Public marketing and legal pages only. Customer feedback pages (/r, /t),
- * dashboards and admin are deliberately excluded and noindexed: they are
- * per-business utility pages, not content for search engines.
+ * /sitemap.xml — submit this URL in Google Search Console. Lists every
+ * published product (with its photos, for Google Images) and each category.
  */
-export default function sitemap(): MetadataRoute.Sitemap {
-  const pages = ["/", "/pricing", "/faq", "/contact", "/signup", "/data-deletion", "/legal/privacy", "/legal/terms", "/legal/refunds", "/legal/cookies", "/legal/subprocessors"];
-  return pages.map((p) => ({ url: absoluteUrl(p), changeFrequency: p.startsWith("/legal") ? "monthly" : "weekly", priority: p === "/" ? 1 : 0.6 }));
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const [base, products, categories] = await Promise.all([getSiteUrl(), getPublishedProducts(), getCategories()]);
+  const latest = products.reduce<string | undefined>((max, p) => (!max || p.updatedAt > max ? p.updatedAt : max), undefined);
+  return [
+    { url: `${base}/`, lastModified: latest, changeFrequency: "daily", priority: 1 },
+    { url: `${base}/products`, lastModified: latest, changeFrequency: "daily", priority: 0.9 },
+    ...categories.map((c) => ({
+      url: `${base}/products?category=${encodeURIComponent(c.name)}`,
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
+    })),
+    ...products.map((p) => ({
+      url: `${base}/products/${p.slug}`,
+      lastModified: p.updatedAt,
+      changeFrequency: "weekly" as const,
+      priority: 0.8,
+      images: p.images.map((src) => absoluteUrl(base, src)),
+    })),
+  ];
 }

@@ -1,21 +1,23 @@
-import { RESERVED_SLUGS } from "./validation";
+export const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
-/** "Café El Bahia!" → "cafe-el-bahia". Always returns a valid slug (min 3 chars, not reserved). */
+/** "Carte NFC Été!" → "carte-nfc-ete". May return "" for input without letters or digits. */
 export function slugify(input: string): string {
-  let slug = input
+  return input
     .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
+    .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "")
-    .slice(0, 50)
+    .slice(0, 80)
     .replace(/-+$/g, "");
-  if (slug.length < 3) slug = `${slug ? `${slug}-` : ""}business`;
-  if (RESERVED_SLUGS.has(slug)) slug = `${slug}-business`;
-  return slug;
 }
 
-export function withRandomSuffix(slug: string): string {
-  const suffix = Math.random().toString(36).slice(2, 6);
-  return `${slug.slice(0, 55)}-${suffix}`;
+/** Returns `base`, or `base-2`, `base-3`… — the first one not in `taken`. */
+export function uniqueSlug(base: string, taken: Set<string>): string {
+  const root = base || "product";
+  if (!taken.has(root)) return root;
+  for (let i = 2; ; i++) {
+    const candidate = `${root}-${i}`;
+    if (!taken.has(candidate)) return candidate;
+  }
 }

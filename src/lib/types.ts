@@ -1,221 +1,102 @@
-/**
- * Domain types shared by the server data layer and UI.
- * Note what is NOT here: customer names, emails, phones, IPs or device data.
- * Feedback is a rating + business/location identifiers + timestamp only.
- */
+export type ProductStatus = "published" | "draft";
 
-export type Locale = "en" | "fr" | "ar";
-
-export type BusinessStatus = "active" | "suspended";
-export type MemberRole = "owner" | "manager" | "viewer";
-export type FeedbackSource = "nfc" | "qr" | "link";
-export type CardStatus = "active" | "inactive";
-export type EventType =
-  | "page_view"
-  | "nfc_visit"
-  | "qr_scan"
-  | "feedback_submitted"
-  | "google_review_clicked";
-
-export type Rating = 1 | 2 | 3 | 4 | 5;
-
-export type OpeningHours = Partial<
-  Record<"mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun", string>
->;
-
-export type SocialLinks = Partial<Record<"instagram" | "facebook" | "tiktok" | "linkedin" | "x", string>>;
-
-export interface Business {
-  id: string;
-  name: string;
-  slug: string;
-  logoUrl: string | null;
-  logoAlt: string | null;
-  brandPrimary: string | null;
-  brandAccent: string | null;
-  description: string | null;
-  googleReviewUrl: string | null;
-  website: string | null;
-  phone: string | null;
-  email: string | null;
-  address: string | null;
-  openingHours: OpeningHours;
-  socialLinks: SocialLinks;
-  defaultLocale: Locale;
-  status: BusinessStatus;
-  feedbackRetentionMonths: number;
-  isDemo: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface Location {
-  id: string;
-  businessId: string;
-  name: string;
-  slug: string;
-  address: string | null;
-  phone: string | null;
-  googleReviewUrl: string | null;
-  openingHours: OpeningHours;
-  createdAt: string;
-  updatedAt: string;
-}
-
-/** Only fields safe to show to anonymous customers. */
-export interface PublicBusiness {
-  name: string;
-  slug: string;
-  logoUrl: string | null;
-  logoAlt: string | null;
-  brandPrimary: string | null;
-  description: string | null;
-  website: string | null;
-  phone: string | null;
-  address: string | null;
-  openingHours: OpeningHours;
-  socialLinks: SocialLinks;
-  defaultLocale: Locale;
-  hasGoogleReviewUrl: boolean;
-  isDemo: boolean;
-  location: { name: string; slug: string; address: string | null; phone: string | null } | null;
-}
-
-export interface Feedback {
-  id: string;
-  businessId: string;
-  locationId: string | null;
-  cardId: string | null;
-  rating: Rating;
-  source: FeedbackSource;
-  createdAt: string;
-}
-
-export interface NfcCard {
-  id: string;
-  code: string;
-  businessId: string;
-  locationId: string | null;
+export interface ProductSpec {
   label: string;
-  status: CardStatus;
+  value: string;
+}
+
+export interface Product {
+  id: string;
+  slug: string;
+  name: string;
+  /** One-line summary shown on cards. */
+  tagline: string;
+  /** Long description; line breaks are preserved. */
+  description: string;
+  price: number;
+  /** Original price, shown struck through when higher than `price`. */
+  compareAtPrice: number | null;
+  sku: string;
+  /** `null` means stock is not tracked (always available). */
+  stock: number | null;
+  category: string;
+  tags: string[];
+  /** Ordered image URLs; the first one is the cover. */
+  images: string[];
+  specs: ProductSpec[];
+  status: ProductStatus;
+  featured: boolean;
+  /** Title and description shown in Google results; empty falls back to name and tagline. */
+  seoTitle: string;
+  seoDescription: string;
   createdAt: string;
   updatedAt: string;
 }
 
-export interface Membership {
-  businessId: string;
-  userId: string;
-  role: MemberRole;
+export type ProductInput = Omit<Product, "id" | "createdAt" | "updatedAt">;
+
+export function toProductInput(product: Product): ProductInput {
+  const input: Partial<Product> = { ...product };
+  delete input.id;
+  delete input.createdAt;
+  delete input.updatedAt;
+  return input as ProductInput;
 }
 
-export interface UserSummary {
-  id: string;
-  email: string;
-  fullName: string | null;
-  isPlatformAdmin: boolean;
-  createdAt: string;
+export const DAYS = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"] as const;
+export type DayCode = (typeof DAYS)[number];
+
+/** One opening interval per open day, "HH:MM" 24-hour times. Days not listed are closed. */
+export interface OpeningHours {
+  day: DayCode;
+  opens: string;
+  closes: string;
 }
 
-export type SubscriptionStatus = "trialing" | "active" | "past_due" | "canceled";
-
-export interface Subscription {
-  id: string;
-  businessId: string;
-  planId: string;
-  interval: "month" | "year";
-  status: SubscriptionStatus;
-  currentPeriodEnd: string;
-  cancelAtPeriodEnd: boolean;
-  createdAt: string;
-}
-
-export type InvoiceStatus = "open" | "paid" | "void" | "refunded";
-
-export interface Invoice {
-  id: string;
-  businessId: string;
-  number: string;
-  amountMinor: number;
+export interface StoreSettings {
+  storeName: string;
+  tagline: string;
+  /** Wrap a word in *asterisks* to highlight it. */
+  heroTitle: string;
+  heroSubtitle: string;
+  /** Optional strip above the header; empty hides it. */
+  announcement: string;
+  /** ISO 4217 code, e.g. "TND". */
   currency: string;
-  status: InvoiceStatus;
-  issuedAt: string;
-  paidAt: string | null;
-  description: string;
-}
-
-export type DeletionScope = "account" | "business" | "marketing" | "other";
-export type DeletionStatus = "pending" | "in_progress" | "completed" | "rejected";
-
-export interface DeletionRequest {
-  id: string;
+  accentColor: string;
+  whatsapp: string;
+  phone: string;
   email: string;
-  scope: DeletionScope;
-  details: string | null;
-  businessId: string | null;
-  requesterUserId: string | null;
-  status: DeletionStatus;
-  resolutionNote: string | null;
-  createdAt: string;
-  resolvedAt: string | null;
+  /** Street address (with postal code, city, region and country below). */
+  address: string;
+  postalCode: string;
+  city: string;
+  region: string;
+  /** ISO 3166-1 alpha-2, e.g. "TN". */
+  country: string;
+  /** Decimal degrees as typed, e.g. "36.8065"; empty when unknown. */
+  latitude: string;
+  longitude: string;
+  openingHours: OpeningHours[];
+  /** schema.org LocalBusiness type, e.g. "Store", or "online" when there's no shop to visit. */
+  businessType: string;
+  /** Google Business Profile links. */
+  googleMapsUrl: string;
+  googleReviewUrl: string;
+  instagram: string;
+  facebook: string;
+  /** Homepage title and description in Google results; empty falls back to name and tagline. */
+  seoTitle: string;
+  seoDescription: string;
+  /** Comma-separated words customers search for; the admin checks your content against them. */
+  seoKeywords: string;
+  /** Google Search Console "HTML tag" verification code. */
+  googleSiteVerification: string;
 }
 
-export interface AuditLog {
-  id: string;
-  actorUserId: string | null;
-  action: string;
-  targetType: string;
-  targetId: string | null;
-  metadata: Record<string, string | number | boolean | null>;
-  createdAt: string;
-}
+export type FormState =
+  | { status: "idle" }
+  | { status: "success"; message: string }
+  | { status: "error"; message: string; fieldErrors?: Record<string, string> };
 
-export type LegalSlug = "privacy" | "terms" | "refunds" | "cookies" | "subprocessors";
-
-export interface LegalDocument {
-  slug: LegalSlug;
-  locale: Locale;
-  title: string;
-  bodyMd: string;
-  version: number;
-  publishedAt: string;
-}
-
-export interface ContactRequest {
-  id: string;
-  name: string;
-  email: string;
-  businessName: string | null;
-  message: string;
-  marketingOptIn: boolean;
-  createdAt: string;
-}
-
-/** Date range used by dashboard analytics (inclusive start, exclusive end, ISO strings). */
-export interface DateRange {
-  from: string;
-  to: string;
-}
-
-export interface DailyPoint {
-  day: string; // YYYY-MM-DD
-  count: number;
-  average: number | null;
-}
-
-export interface FeedbackStats {
-  total: number;
-  average: number | null;
-  distribution: Record<Rating, number>;
-  series: DailyPoint[];
-  pageViews: number;
-  nfcVisits: number;
-  qrScans: number;
-  googleClicks: number;
-  feedbackSubmittedEvents: number;
-}
-
-export interface Actor {
-  userId: string;
-  email: string;
-  isPlatformAdmin: boolean;
-}
+export const idleState: FormState = { status: "idle" };

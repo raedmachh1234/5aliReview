@@ -1,9 +1,11 @@
 import type { MetadataRoute } from "next";
-import { absoluteUrl } from "@/config/site";
+import { getSiteUrl } from "@/server/site";
 
-export default function robots(): MetadataRoute.Robots {
+export default async function robots(): Promise<MetadataRoute.Robots> {
+  const base = await getSiteUrl();
   return {
-    rules: [{ userAgent: "*", allow: "/", disallow: ["/dashboard", "/admin", "/api/", "/r/", "/t/", "/auth/", "/lang/", "/unsubscribe", "/login"] }],
-    sitemap: absoluteUrl("/sitemap.xml"),
+    // The admin is also sent with noindex headers; product photos under /media stay crawlable.
+    rules: [{ userAgent: "*", allow: "/", disallow: ["/admin"] }],
+    sitemap: `${base}/sitemap.xml`,
   };
 }
